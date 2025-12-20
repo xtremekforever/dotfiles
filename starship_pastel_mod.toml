@@ -13,6 +13,7 @@ $directory\
     $java\
     $julia\
     $rust\
+    $swift\
 )\
 [](fg:fourth bg:fifth)\
 $docker_context\
@@ -202,6 +203,12 @@ format = '[$symbol($version) ]($style)'
 
 [rust]
 symbol = " "
+version_format = "${raw}"
+style = "bg:fourth fg:white"
+format = '[$symbol($version) ]($style)'
+
+[swift]
+symbol = "󰛥 "
 version_format = "${raw}"
 style = "bg:fourth fg:white"
 format = '[$symbol($version) ]($style)'
