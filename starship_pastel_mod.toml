@@ -15,8 +15,6 @@ $directory\
     $rust\
     $swift\
 )\
-[](fg:fourth bg:fifth)\
-$docker_context\
 [](fg:fifth bg:sixth)\
 (\
     $git_branch\
@@ -27,6 +25,10 @@ $time\
 $cmd_duration\
 $character\
 """
+
+# [](fg:fourth bg:fifth)\
+# $docker_context\
+
 
 # Palettes:
 #   opal: sky blue.
@@ -137,11 +139,11 @@ format = '[$user]($style)[](fg:second bg:third)'
 [hostname]
 ssh_symbol = "󰌘 "
 style = "bg:second fg:white"
-format = "[$ssh_symbol$hostname]($style)"
+format = "[ $ssh_symbol$hostname]($style)"
 
 [directory]
 style = "bg:third fg:white"
-format = "[   $path ]($style)($style)[$read_only]($read_only_style)[](fg:third bg:fourth)"
+format = "[   $path ]($style)($style)[$read_only]($style)[](fg:third bg:fourth)"
 truncation_symbol = "…/"
 truncate_to_repo = true
 read_only ="  "
