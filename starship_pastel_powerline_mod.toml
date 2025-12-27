@@ -26,6 +26,7 @@ $scala\
 [](fg:#86BBD8 bg:#06969A)\
 $docker_context\
 [](fg:#06969A bg:#33658A)\
+$shell\
 $time\
 [ ](fg:#33658A)\
 """
@@ -193,4 +194,13 @@ format = '[ $symbol ($version) ]($style)'
 disabled = false
 time_format = "%R" # Hour:Minute Format
 style = "bg:#33658A"
-format = '[ ♥ $time ]($style)'
+format = '[$time ]($style)'
+
+[shell]
+disabled = false
+fish_indicator = ""
+bash_indicator = ""
+zsh_indicator = "󰰶"
+style = "bg:#33658A"
+format = '[ $indicator ]($style)'
+
