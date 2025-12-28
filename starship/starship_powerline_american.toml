@@ -39,19 +39,19 @@ $time\
 # and use the os module below
 [username]
 show_always = true
-style_user = "bg:#2B3448 fg:#F2E1B8"
-style_root = "bg:#2B3448 fg:#F2E1B8"
+style_user = "bg:#2B3448 fg:#d3d7cf"
+style_root = "bg:#2B3448 fg:#d3d7cf"
 format = '[$user]($style)'
 disabled = false
 
 [hostname]
 ssh_symbol = " 󰌘"
 ssh_only = false
-style = "bg:#2B3448 fg:#F2E1B8"
+style = "bg:#2B3448 fg:#d3d7cf"
 format = "[@$hostname$ssh_symbol ]($style)"
 
 [os]
-style = "bg:#2B3448 fg:#F2E1B8"
+style = "bg:#2B3448 fg:#d3d7cf"
 disabled = false # Disabled by default
 
 [os.symbols]
@@ -93,7 +93,7 @@ Unknown = " "
 Windows = " "
 
 [directory]
-style = "bg:#2e3b5b fg:#F2E1B8"
+style = "bg:#2e3b5b fg:#d3d7cf"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -138,11 +138,11 @@ format = '[ $symbol ($version) ]($style)'
 
 [git_branch]
 symbol = ""
-style = "bg:#556c75 fg:#F2E1B8"
+style = "bg:#556c75 fg:#d3d7cf"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:#556c75 fg:#F2E1B8"
+style = "bg:#556c75 fg:#d3d7cf"
 format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
@@ -199,11 +199,11 @@ disabled = false
 fish_indicator = ""
 bash_indicator = ""
 zsh_indicator = "󰰶"
-style = "bg:#833535 fg:#F2E1B8"
+style = "bg:#833535 fg:#d3d7cf"
 format = '[ $indicator ]($style)'
 
 [time]
 disabled = false
 time_format = "%R"
-style = "bg:#833535 fg:#F2E1B8"
+style = "bg:#833535 fg:#d3d7cf"
 format = '[$time ]($style)'
