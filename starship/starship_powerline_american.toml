@@ -196,9 +196,9 @@ format = '[ $symbol ($version) ]($style)'
 
 [shell]
 disabled = false
-fish_indicator = ""
-bash_indicator = ""
-zsh_indicator = "󰰶"
+fish_indicator = " "
+bash_indicator = " "
+zsh_indicator = "󰰶 "
 style = "bg:#833535 fg:#d3d7cf"
 format = '[ $indicator ]($style)'
 
