@@ -1,0 +1,49 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "source": "~/.config/fastfetch/swift-logo-american-ascii.txt"
+  },
+  "display": {
+    "color": {
+      "keys": "38;2;131;53;53"
+    }
+  },
+  "modules": [
+    {
+      "type": "title",
+      "color":
+      {
+        "user": "38;2;131;53;53",
+        "host": "38;2;131;53;53"
+      }
+    },
+    "separator",
+    "os",
+    "host",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
+    "display",
+    "de",
+    "wm",
+    "wmtheme",
+    "theme",
+    "icons",
+    "font",
+    "cursor",
+    "terminal",
+    "terminalfont",
+    "cpu",
+    "gpu",
+    "memory",
+    "swap",
+    "disk",
+    "localip",
+    "battery",
+    "poweradapter",
+    "locale",
+    "break",
+    "colors"
+  ]
+}
