@@ -17,9 +17,14 @@ if [ -z $LOGO ]; then
     echo "No logo selected, defaulting to $LOGO..."
 fi
 
-echo "Removing old fastfetch configuration..."
-rm -f $LOGO_FILE
-rm -f $CONFIG_FILE
+if [ -d $CONFIG_DIR ]; then
+    echo "Removing old fastfetch configuration..."
+    rm -f $LOGO_FILE
+    rm -f $CONFIG_FILE
+else
+    echo "Creating $CONFIG_DIR for fastfetch..."
+    mkdir -p $CONFIG_DIR
+fi
 
 echo "Linking logo $LOGO for fastfetch to $LOGO_FILE..."
 ln -s $(pwd)/$LOGO $LOGO_FILE
