@@ -24,6 +24,7 @@ $nim\
 $rust\
 $scala\
 $swift\
+$python\
 [](fg:#dab281 bg:#b36c4c)\
 $docker_context\
 [](fg:#b36c4c bg:#833535)\
@@ -193,6 +194,11 @@ format = '[ $symbol ($version) ]($style)'
 symbol = "󰛥 "
 style = "bg:#dab281 fg:#2B3448"
 format = '[ $symbol ($version) ]($style)'
+
+[python]
+symbol = " "
+style = "bg:#dab281 fg:#2B3448"
+format = '[ $symbol$pyenv_prefix($version )(\($virtualenv\) )]($style)'
 
 [shell]
 disabled = false
