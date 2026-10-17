@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""Inspect Apple's StartupMute variable and optionally clear it."""
+
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+
+VARIABLE = Path(
+    "/sys/firmware/efi/efivars/"
+    "StartupMute-7c436110-ab2a-4bbb-a880-fe41995c9f82"
+)
+
+
+def ask(question):
+    while True:
+        answer = input(f"{question} [y/N] ").strip().lower()
+        if answer in ("", "n", "no"):
+            return False
+        if answer in ("y", "yes"):
+            return True
+        print("Please enter y or n.")
+
+
+def read_variable():
+    data = VARIABLE.read_bytes()
+    if len(data) != 5:
+        raise ValueError(
+            f"Unexpected variable size ({len(data)} bytes; expected 5)."
+        )
+    return data
+
+
+def reset_variable():
+    if os.geteuid() != 0:
+        raise PermissionError("Resetting StartupMute requires root privileges.")
+    current = read_variable()
+    if current[4] == 0:
+        print("StartupMute is already zero; nothing changed.")
+        return
+
+    attributes = subprocess.check_output(
+        ["lsattr", str(VARIABLE)], text=True
+    ).split()[0]
+    immutable = "i" in attributes
+    if immutable:
+        subprocess.run(["chattr", "-i", str(VARIABLE)], check=True)
+    try:
+        # efivarfs requires the four-byte firmware attributes before the value.
+        VARIABLE.write_bytes(current[:4] + b"\x00")
+    finally:
+        if immutable:
+            subprocess.run(["chattr", "+i", str(VARIABLE)], check=True)
+
+    if read_variable() != current[:4] + b"\x00":
+        raise ValueError("StartupMute verification failed.")
+    print("StartupMute successfully changed to %00 and verified.")
+    if ask("Reboot now to let the firmware apply the change?"):
+        subprocess.run(["systemctl", "reboot"], check=True)
+    else:
+        print("Reboot when convenient to let the firmware apply the change.")
+
+
+def main():
+    if sys.argv[1:] == ["--reset"]:
+        reset_variable()
+        return
+    if sys.argv[1:]:
+        raise ValueError("Usage: startupmute")
+
+    current = read_variable()
+    value = current[4]
+    print(f"StartupMute: %{value:02X} ({value})")
+    print(f"Firmware attributes: {current[:4].hex(' ')}")
+    if value == 0:
+        print("Already zero (startup mute disabled); no change needed.")
+        return
+
+    print("StartupMute is non-zero.")
+    if not ask("Set StartupMute back to %00?"):
+        print("Nothing changed.")
+        return
+    if os.geteuid() == 0:
+        reset_variable()
+    else:
+        # Elevate only after consent; sudo can prompt in this terminal.
+        subprocess.run(
+            ["sudo", sys.executable, str(Path(__file__).resolve()), "--reset"],
+            check=True,
+        )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except FileNotFoundError as error:
+        print(f"Error: required variable or command not found: {error}", file=sys.stderr)
+        sys.exit(1)
+    except (OSError, ValueError, subprocess.CalledProcessError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        sys.exit(1)
+    except (EOFError, KeyboardInterrupt):
+        print("\nCancelled; no further action taken.", file=sys.stderr)
+        sys.exit(130)
