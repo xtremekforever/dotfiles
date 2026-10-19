@@ -8,10 +8,21 @@ if (( EUID != 0 )); then
   exit 1
 fi
 
+# The old ignore rule prevents the desktop from seeing a rebound touchscreen.
+# Only remove the known version; do not overwrite locally customized rules.
+OLD_RULE=/etc/udev/rules.d/99-disable-touchscreen.rules
+if [[ -e "$OLD_RULE" || -L "$OLD_RULE" ]]; then
+  if cmp -s -- "$SCRIPT_DIR/99-disable-touchscreen.rules" "$OLD_RULE"; then
+    rm -- "$OLD_RULE"
+  else
+    echo "Review and remove $OLD_RULE manually; it differs from the legacy rule in this directory." >&2
+    exit 1
+  fi
+fi
+
 install -D -m 0644 "$SCRIPT_DIR/61-razer-touchpad.hwdb" \
   /etc/udev/hwdb.d/61-razer-touchpad.hwdb
-install -D -m 0644 "$SCRIPT_DIR/99-disable-touchscreen.rules" \
-  /etc/udev/rules.d/99-disable-touchscreen.rules
+install -D -m 0755 "$SCRIPT_DIR/touchscreen" /usr/local/bin/touchscreen
 
 if command -v systemd-hwdb >/dev/null 2>&1; then
   systemd-hwdb update
@@ -23,4 +34,7 @@ else
 fi
 
 udevadm control --reload
-echo "Installed udev configuration. Reboot for the touchpad and touchscreen changes to take effect."
+echo "Installed touchpad configuration and touchscreen switch."
+echo "Reboot for touchpad changes. For the touchscreen, run:"
+echo "  sudo touchscreen off"
+echo "  sudo touchscreen on"

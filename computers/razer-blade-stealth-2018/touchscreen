@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+USB_DEVICES=/sys/bus/usb/devices
+USB_DRIVER=/sys/bus/usb/drivers/usb
+
+usage() {
+  echo "Usage: $(basename -- "$0") {on|off|toggle|status}" >&2
+}
+
+if (( $# != 1 )); then
+  usage
+  exit 1
+fi
+
+case "$1" in
+  on|off|toggle|status) action=$1 ;;
+  *) usage; exit 1 ;;
+esac
+
+devices=()
+for device in "$USB_DEVICES"/*; do
+  [[ -r "$device/idVendor" && -r "$device/idProduct" ]] || continue
+  if [[ $(< "$device/idVendor") == 04f3 && $(< "$device/idProduct") == 2379 ]]; then
+    devices+=("$device")
+  fi
+done
+
+if (( ${#devices[@]} != 1 )); then
+  echo "Expected exactly one Elan touchscreen (04f3:2379); found ${#devices[@]}. No changes made." >&2
+  exit 1
+fi
+
+device=${devices[0]}
+device_id=${device##*/}
+driver=$(readlink -f -- "$device/driver" 2>/dev/null || true)
+if [[ -L "$device/driver" && "$driver" != "$USB_DRIVER" ]]; then
+  echo "Touchscreen has an unexpected USB driver: $driver. No changes made." >&2
+  exit 1
+fi
+
+state=off
+[[ -L "$device/driver" ]] && state=on
+if [[ "$action" == status ]]; then
+  echo "Touchscreen USB binding: $state ($device_id)"
+  exit 0
+fi
+
+if (( EUID != 0 )); then
+  echo "Run this command with sudo: sudo $0 $action" >&2
+  exit 1
+fi
+
+if [[ "$action" == toggle ]]; then
+  if [[ "$state" == on ]]; then
+    action=off
+  else
+    action=on
+  fi
+fi
+
+if [[ "$action" == "$state" ]]; then
+  echo "Touchscreen is already $state."
+  exit 0
+fi
+
+if [[ "$action" == on ]]; then
+  control=bind
+else
+  control=unbind
+fi
+
+if ! printf '%s' "$device_id" > "$USB_DRIVER/$control"; then
+  echo "Failed to turn touchscreen $action using $USB_DRIVER/$control." >&2
+  exit 1
+fi
+
+echo "Touchscreen turned $action."
