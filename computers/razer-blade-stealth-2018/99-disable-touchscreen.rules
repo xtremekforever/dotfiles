@@ -1,0 +1,4 @@
+# Bus 001 Device 005: ID 04f3:2379 Elan Microelectronics Corp. Touchscreen
+# Deploy: sudo cp 99-disable-touchscreen.rules /etc/udev/rules.d/
+# Reboot after deploy.
+ACTION=="add", SUBSYSTEM=="input", ATTRS{idVendor}=="04f3", ATTRS{idProduct}=="2379", ENV{LIBINPUT_IGNORE_DEVICE}="1"
